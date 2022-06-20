@@ -11,19 +11,19 @@ let campoSaldo = document.getElementById("campo-saldo");
 campoSaldo.innerHTML = 0;
 
 function somarAoSaldo(soma) {
-  campoSaldo.innerHTML += soma;
+	campoSaldo.innerHTML += soma;
 }
 
 function limparSaldo() {
-  campoSaldo.innerHTML = "";
+	campoSaldo.innerHTML = "";
 }
 
 botaoAtualizar.addEventListener("click", function () {
-  somarAoSaldo(soma.value);
+	somarAoSaldo(soma.value);
 });
 
 botaoLimpar.addEventListener("click", function () {
-  limparSaldo();
+	limparSaldo();
 });
 
 /**
