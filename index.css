@@ -1,0 +1,9 @@
+* {
+	font-family: sans-serif;
+}
+
+.wrapper-login {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}

@@ -4,9 +4,9 @@
  * Você consegue usar typescript para organizar esse código e a partir daí aprimorar o que
  * foi feito?
  *
- * A ideia dessa atividade é criar um aplicativo que:
+ * A ideia dessa atividade é criar um aplicativo que deve:
  *
- * (OK) Buscar filmes
+ * (OK) Buscar filmes no TMDB
  * (OK) Apresentar uma lista com os resultados pesquisados
  * () Permitir a criação de listas de filmes e a posterior adição de filmes nela
  *
@@ -18,7 +18,7 @@
  * do site para entender como gera uma API key https://bit.ly/2YhhtXU
  **/
 
-let apiKey: string = "cb455257e52a24733cdc4ae9e73d82e2";
+let apiKey: string;
 let requestToken: string;
 let username: string;
 let password: string;
@@ -36,12 +36,22 @@ let searchContainer = document.getElementById(
 const searchInput = document.querySelector("#search") as HTMLInputElement;
 
 loginButton.addEventListener("click", async () => {
-	await criarRequestToken();
-	await logar();
-	await criarSessao();
+	const token = await createRequestToken();
+	console.log(token);
+
+	// await logar();
+	// await criarSessao();
+	/**
+		if (res) {
+			window.location.replace("http://localhost:3000/dashboard.html");
+		}
+		console.log({ username, apiKey, sessionId, listId });
+		*/
+	// const wrapper = document.createElement("ul");
+	// console.log(wrapper);
 });
 
-async function criarRequestToken() {
+async function createRequestToken() {
 	let result = await HttpClient.get({
 		url: `https://api.themoviedb.org/3/authentication/token/new?api_key=${apiKey}`,
 		method: "GET",
@@ -145,7 +155,7 @@ class HttpClient {
 	}
 }
 
-async function procurarFilme(query) {
+async function procurarFilme(query: string) {
 	query = encodeURI(query);
 
 	let result = await HttpClient.get({
@@ -156,7 +166,7 @@ async function procurarFilme(query) {
 	return result;
 }
 
-async function adicionarFilme(filmeId) {
+async function adicionarFilme(filmeId: number) {
 	let result = await HttpClient.get({
 		url: `https://api.themoviedb.org/3/movie/${filmeId}?api_key=${apiKey}&language=en-US`,
 		method: "GET",
@@ -164,7 +174,7 @@ async function adicionarFilme(filmeId) {
 	console.log(result);
 }
 
-async function criarLista(nomeDaLista, descricao) {
+async function criarLista(nomeDaLista: string, descricao: string) {
 	let result = await HttpClient.get({
 		url: `https://api.themoviedb.org/3/list?api_key=${apiKey}&session_id=${sessionId}`,
 		method: "POST",
@@ -177,7 +187,7 @@ async function criarLista(nomeDaLista, descricao) {
 	console.log(result);
 }
 
-async function adicionarFilmeNaLista(filmeId, listaId) {
+async function adicionarFilmeNaLista(filmeId: number, listaId: number) {
 	let result = await HttpClient.get({
 		url: `https://api.themoviedb.org/3/list/${listaId}/add_item?api_key=${apiKey}&session_id=${sessionId}`,
 		method: "POST",
