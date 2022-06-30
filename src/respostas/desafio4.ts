@@ -18,12 +18,12 @@
  * do site para entender como gera uma API key https://bit.ly/2YhhtXU
  **/
 
-let apiKey: string;
 let requestToken: string;
 let username: string;
 let password: string;
 let sessionId: string;
 let listId: string;
+let apiKey: string;
 
 let loginButton = document.getElementById("login-button") as HTMLButtonElement;
 let searchButton = document.getElementById(
@@ -35,31 +35,90 @@ let searchContainer = document.getElementById(
 
 const searchInput = document.querySelector("#search") as HTMLInputElement;
 
-loginButton.addEventListener("click", async () => {
-	const token = await createRequestToken();
-	console.log(token);
+class HttpClient {
+	static async get({ url, method, body = null }) {
+		return new Promise((resolve, reject) => {
+			let request = new XMLHttpRequest();
+			request.open(method, url, true);
 
-	// await logar();
-	// await criarSessao();
-	/**
-		if (res) {
-			window.location.replace("http://localhost:3000/dashboard.html");
-		}
-		console.log({ username, apiKey, sessionId, listId });
-		*/
-	// const wrapper = document.createElement("ul");
-	// console.log(wrapper);
-});
+			request.onload = () => {
+				if (request.status >= 200 && request.status < 300) {
+					resolve(JSON.parse(request.responseText));
+				} else {
+					reject({
+						status: request.status,
+						statusText: request.statusText,
+					});
+				}
+			};
+			request.onerror = () => {
+				reject({
+					status: request.status,
+					statusText: request.statusText,
+				});
+			};
 
-async function createRequestToken() {
-	let result = await HttpClient.get({
-		url: `https://api.themoviedb.org/3/authentication/token/new?api_key=${apiKey}`,
-		method: "GET",
-	});
-	requestToken = result.request_token;
+			if (body) {
+				request.setRequestHeader(
+					"Content-Type",
+					"application/json;charset=UTF-8"
+				);
+				body = JSON.stringify(body);
+			}
+			request.send(body);
+		});
+	}
 }
 
-async function logar() {
+const authorizationImdb = async () => {
+	const api_token =
+		"eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjYjQ1NTI1N2U1MmEyNDczM2NkYzRhZTllNzNkODJlMiIsInN1YiI6IjU5YmQyNTE5OTI1MTQxMzU0YTAxMTE3OSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.a6kxYvfCA_7eUC91i5l95-xnUCtJzVlEJwEkgCDH4ww";
+	const api_key = "cb455257e52a24733cdc4ae9e73d82e2";
+	const url = `https://api.themoviedb.org/4/list/2?api_key=${api_key}`;
+
+	let myHeaders = new Headers({
+		Authorization: `Bearer ${api_token}`,
+		"Content-Type": "application/json;charset=utf-8",
+	});
+
+	const fetchApi = await fetch(url, myHeaders);
+	const data = await fetchApi.json();
+	console.log(data);
+};
+
+async function createRequestToken(apiKey: any) {
+	// --url 'https://api.themoviedb.org/4/list/1'
+	// --header 'Authorization: Bearer <<access_token>>'
+	// --header 'Content-Type: application/json;charset=utf-8'
+
+	try {
+		let result = await HttpClient.get({
+			url: `https://api.themoviedb.org/3/authentication/token/new?api_key=${apiKey}`,
+			method: "GET",
+		});
+		requestToken = result.request_token;
+		return requestToken;
+	} catch (error) {
+		console.log(error);
+	}
+}
+
+async function createApproveToken() {
+	// https://www.themoviedb.org/auth/access?request_token={request_token}
+	try {
+		let result = await HttpClient.get({
+			url: `https://www.themoviedb.org/auth/access?request_token=${requestToken}`,
+			method: "GET",
+		});
+		requestToken = result.request_token;
+		return requestToken;
+	} catch (error) {
+		console.log(error);
+	}
+}
+
+/**
+async function login() {
 	await HttpClient.get({
 		url: `https://api.themoviedb.org/3/authentication/token/validate_with_login?api_key=${apiKey}`,
 		method: "POST",
@@ -71,13 +130,31 @@ async function logar() {
 	});
 }
 
-async function criarSessao() {
+async function createSession() {
 	let result = await HttpClient.get({
 		url: `https://api.themoviedb.org/3/authentication/session/new?api_key=${apiKey}&request_token=${requestToken}`,
 		method: "GET",
 	});
 	sessionId = result.session_id;
 }
+*/
+
+loginButton.addEventListener("click", async () => {
+	await authorizationImdb();
+
+	// const apiKey = document.querySelector("#api-key").value;
+	// await createRequestToken(apiKey);
+	// await login();
+	// await createSession();
+
+	/**
+	if (res) {
+		window.location.replace("http://localhost:3000/dashboard.html");
+	}
+	*/
+
+	// console.log({ username, apiKey, sessionId, listId });
+});
 
 searchButton.addEventListener("click", async () => {
 	let lista = document.getElementById("lista");
@@ -117,41 +194,6 @@ function validateLoginButton() {
 		loginButton.disabled = false;
 	} else {
 		loginButton.disabled = true;
-	}
-}
-
-class HttpClient {
-	static async get({ url, method, body = null }) {
-		return new Promise((resolve, reject) => {
-			let request = new XMLHttpRequest();
-			request.open(method, url, true);
-
-			request.onload = () => {
-				if (request.status >= 200 && request.status < 300) {
-					resolve(JSON.parse(request.responseText));
-				} else {
-					reject({
-						status: request.status,
-						statusText: request.statusText,
-					});
-				}
-			};
-			request.onerror = () => {
-				reject({
-					status: request.status,
-					statusText: request.statusText,
-				});
-			};
-
-			if (body) {
-				request.setRequestHeader(
-					"Content-Type",
-					"application/json;charset=UTF-8"
-				);
-				body = JSON.stringify(body);
-			}
-			request.send(body);
-		});
 	}
 }
 

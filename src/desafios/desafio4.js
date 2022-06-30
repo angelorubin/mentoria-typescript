@@ -14,13 +14,13 @@
  * do site para entender como gera uma API key https://bit.ly/2YhhtXU
  */
 
-var apiKey = "3f301be7381a03ad8d352314dcc3ec1d";
+var apiKey = process.env.API_KEY;
 let apiKey;
 let requestToken;
 let username;
 let password;
 let sessionId;
-let listId = "7101979";
+let listId;
 
 let loginButton = document.getElementById("login-button");
 let searchButton = document.getElementById("search-button");
