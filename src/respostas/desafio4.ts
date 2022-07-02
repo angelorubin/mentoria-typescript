@@ -137,7 +137,6 @@ async function createSession() {
 	});
 	sessionId = result.session_id;
 }
-*/
 
 loginButton.addEventListener("click", async () => {
 	await authorizationImdb();
@@ -147,11 +146,9 @@ loginButton.addEventListener("click", async () => {
 	// await login();
 	// await createSession();
 
-	/**
 	if (res) {
 		window.location.replace("http://localhost:3000/dashboard.html");
 	}
-	*/
 
 	// console.log({ username, apiKey, sessionId, listId });
 });
@@ -173,6 +170,7 @@ searchButton.addEventListener("click", async () => {
 	console.log(listaDeFilmes);
 	searchContainer.appendChild(ul);
 });
+*/
 
 function preencherLogin() {
 	username = document.getElementById("login").value;

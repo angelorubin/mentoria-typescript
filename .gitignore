@@ -3,3 +3,4 @@ app.js
 **/*.js
 **/*.js.map
 .env
+utils/index.js
